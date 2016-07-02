@@ -1,8 +1,7 @@
 'use strict';
 
 // Constants
-const ENEMIES = 3;
-const MINIMUM_ACCEPTABLE_HEALTH = 10;
+const FULL_HEALTH = 20;
 const FORWARD = 'forward';
 const BACKWARD = 'backward';
 const RIGHT = 'right';
@@ -10,9 +9,6 @@ const LEFT = 'left';
 const DIRECTIONS = [FORWARD, BACKWARD, RIGHT, LEFT];
 
 // States
-let enemiesKilled = 0;
-let attackingDirection;
-let previouslyAttackingDirection;
 const bailPath = [];
 
 function filterSurroundings(surroundings, filter) {
@@ -31,7 +27,14 @@ function feelSurroundings(warrior) {
 }
 
 function isTooRisky(warrior) {
-  return warrior.health() < MINIMUM_ACCEPTABLE_HEALTH;
+  return warrior.health() < (FULL_HEALTH * 0.5);
+}
+
+function shouldRest(warrior) {
+  const remainingEnemy = warrior.listen()
+    .find((occupiedSpace) => occupiedSpace.isEnemy());
+
+  return !!remainingEnemy && (warrior.health() < FULL_HEALTH * 0.90);
 }
 
 function getReverseDirection(direction) {
@@ -70,7 +73,6 @@ class Player { // eslint-disable-line no-unused-vars
       if (isTooRisky(warrior)) {
         // Try to bail out!
         if (emptySurroundings) {
-          previouslyAttackingDirection = undefined; // Attack was cancelled
           const bailDirection = emptySurroundings.pop().direction;
           bailPath.push(bailDirection);
           return warrior.walk(bailDirection);
@@ -78,38 +80,24 @@ class Player { // eslint-disable-line no-unused-vars
       }
 
       // Attack
-      attackingDirection = enemySurroundings.pop().direction;
-
-      if (previouslyAttackingDirection &&
-          (attackingDirection !== previouslyAttackingDirection)) {
-        // Seems like I changed my objective. Did I kill the previous guy?
-        enemiesKilled++;
-      }
-
-      // My fish-memory should remember this
-      previouslyAttackingDirection = attackingDirection;
-
-      return warrior.attack(attackingDirection);
+      return warrior.attack(enemySurroundings.pop().direction);
     }
 
     // Can't feel any enemy
-    if (!enemySurroundings.length) {
-      if (previouslyAttackingDirection) {
-        // But I was just attacking one... I must have killed him *shrug*
-        previouslyAttackingDirection = undefined;
-        enemiesKilled++;
-        console.log(`Enemy killed! (${enemiesKilled} out of ${ENEMIES})`);
-      }
-
-      if (isTooRisky(warrior) && (enemiesKilled < ENEMIES)) {
-        // I remember now! I was running. I will just sit here!
-        return warrior.rest();
-      }
+    if (!enemySurroundings.length && shouldRest(warrior)) {
+      // It's safe to rest now. I'll just sit here.
+      return warrior.rest();
     }
 
     // WAIT! Was I running away from something? I should go back and fight!
     if (bailPath.length) {
       return warrior.walk(getReverseDirection(bailPath.pop()));
+    }
+
+    // Shhh... is there something else in this room?
+    const occupiedSpaces = warrior.listen();
+    if (occupiedSpaces.length) {
+      return warrior.walk(warrior.directionOf(occupiedSpaces.pop()));
     }
 
     // My job here is done. Let's get out.

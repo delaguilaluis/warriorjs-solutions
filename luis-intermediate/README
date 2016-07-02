@@ -1,20 +1,21 @@
-Level 3
+Level 4
 
-You feel slime on all sides, you're surrounded!
+Your ears become more in tune with the surroundings. Listen to find enemies and captives!
 
-Tip: Call `warrior.bind(direction)` to bind an enemy to keep him from attacking. Bound enemies look like captives.
+Tip: Use `warrior.listen()` to find spaces with other units, and `warrior.directionOf()` to determine what direction they're in.
 
 
-╔═══╗
-║>s ║
-║s@s║
-║ C ║
-╚═══╝
+╔════╗
+║C s ║
+║ @ S║
+║C s>║
+╚════╝
 
   > = stairs
   @ = Luis
   C = captive
   s = sludge
+  S = thickSludge
 
 
 Warrior abilities:
@@ -31,9 +32,13 @@ Warrior abilities:
 
   warrior.rest()
 
-  warrior.bind() (NEW!)
+  warrior.bind()
 
-  warrior.rescue() (NEW!)
+  warrior.rescue()
+
+  warrior.directionOf() (NEW!)
+
+  warrior.listen() (NEW!)
 
 
 When you're done editing Player.js, run the warriorjs command again.
