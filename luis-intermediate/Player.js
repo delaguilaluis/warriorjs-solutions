@@ -11,18 +11,18 @@ const DIRECTIONS = [FORWARD, BACKWARD, RIGHT, LEFT];
 // States
 const bailPath = [];
 
-function filterSurroundings(surroundings, filter) {
-  return surroundings.filter((surrounding) => (
-    surrounding.space[`is${filter}`]()
-  ));
-}
-
 function feelSurroundings(warrior) {
   return DIRECTIONS.map((direction) => (
     {
       direction,
       space: warrior.feel(direction),
     }
+  ));
+}
+
+function filterSurroundings(surroundings, filter) {
+  return surroundings.filter((surrounding) => (
+    surrounding.space[`is${filter}`]()
   ));
 }
 
@@ -55,6 +55,26 @@ function getReverseDirection(direction) {
   }
 
   return reverseDirection;
+}
+
+function getNextObjectiveDirection(warrior) {
+  const surroundings = feelSurroundings(warrior);
+  const stairsSurroundings = filterSurroundings(surroundings, 'Stairs');
+  const stairsDirection = stairsSurroundings.length &&
+    stairsSurroundings.pop().direction;
+  const goalDirection = warrior.directionOf(warrior.listen().pop());
+
+  if (goalDirection !== stairsDirection) {
+    return goalDirection;
+  }
+
+  // The goal direction is where the stairs are. Let's try another path.
+  return filterSurroundings(surroundings, 'Empty')
+    .find((surrounding) => (
+      surrounding.direction !== stairsDirection &&
+        surrounding.direction !== getReverseDirection(stairsDirection)
+    ))
+    .direction;
 }
 
 class Player { // eslint-disable-line no-unused-vars
@@ -95,9 +115,8 @@ class Player { // eslint-disable-line no-unused-vars
     }
 
     // Shhh... is there something else in this room?
-    const occupiedSpaces = warrior.listen();
-    if (occupiedSpaces.length) {
-      return warrior.walk(warrior.directionOf(occupiedSpaces.pop()));
+    if (warrior.listen().length) {
+      return warrior.walk(getNextObjectiveDirection(warrior));
     }
 
     // My job here is done. Let's get out.
