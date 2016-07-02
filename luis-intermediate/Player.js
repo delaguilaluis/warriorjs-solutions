@@ -7,7 +7,7 @@ const FORWARD = 'forward';
 const BACKWARD = 'backward';
 const RIGHT = 'right';
 const LEFT = 'left';
-const DIRECTIONS = ['forward', 'backward', 'right', 'left'];
+const DIRECTIONS = [FORWARD, BACKWARD, RIGHT, LEFT];
 
 // States
 let enemiesKilled = 0;
@@ -101,17 +101,18 @@ class Player { // eslint-disable-line no-unused-vars
         console.log(`Enemy killed! (${enemiesKilled} out of ${ENEMIES})`);
       }
 
-      // I remember now! I was running. I will just sit here!
       if (isTooRisky(warrior) && (enemiesKilled < ENEMIES)) {
+        // I remember now! I was running. I will just sit here!
         return warrior.rest();
       }
     }
 
-    // WAIT! Was I running away from something? I should fight!
+    // WAIT! Was I running away from something? I should go back and fight!
     if (bailPath.length) {
       return warrior.walk(getReverseDirection(bailPath.pop()));
     }
 
+    // My job here is done. Let's get out.
     return warrior.walk(warrior.directionOfStairs());
   }
 }
