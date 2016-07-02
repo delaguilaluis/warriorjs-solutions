@@ -1,18 +1,19 @@
-Level 2
+Level 3
 
-Another large room, but with several enemies blocking your way to the stairs.
+You feel slime on all sides, you're surrounded!
 
-Tip: Just like walking, you can attack and feel in multiple directions ('forward', 'left', 'right', 'backward').
+Tip: Call `warrior.bind(direction)` to bind an enemy to keep him from attacking. Bound enemies look like captives.
 
 
-╔════╗
-║@s  ║
-║ sS>║
-╚════╝
+╔═══╗
+║>s ║
+║s@s║
+║ C ║
+╚═══╝
 
   > = stairs
   @ = Luis
-  S = thickSludge
+  C = captive
   s = sludge
 
 
@@ -22,13 +23,17 @@ Warrior abilities:
 
   warrior.walk()
 
-  warrior.feel() (NEW!)
+  warrior.feel()
 
-  warrior.attack() (NEW!)
+  warrior.attack()
 
-  warrior.health() (NEW!)
+  warrior.health()
 
-  warrior.rest() (NEW!)
+  warrior.rest()
+
+  warrior.bind() (NEW!)
+
+  warrior.rescue() (NEW!)
 
 
 When you're done editing Player.js, run the warriorjs command again.
