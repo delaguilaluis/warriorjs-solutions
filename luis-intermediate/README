@@ -1,26 +1,34 @@
-Level 1
+Level 2
 
-Silence. The room feels large, but empty. Luckily you have a map of this tower to help find the stairs.
+Another large room, but with several enemies blocking your way to the stairs.
 
-Tip: Use `warrior.directionOfStairs()` to determine which direction stairs are located. Pass this to `warrior.walk()` to walk in that direction.
+Tip: Just like walking, you can attack and feel in multiple directions ('forward', 'left', 'right', 'backward').
 
 
-╔══════╗
-║      ║
-║@     ║
-║      ║
-║  >   ║
-╚══════╝
+╔════╗
+║@s  ║
+║ sS>║
+╚════╝
 
   > = stairs
   @ = Luis
+  S = thickSludge
+  s = sludge
 
 
 Warrior abilities:
 
-  warrior.directionOfStairs() (NEW!)
+  warrior.directionOfStairs()
 
-  warrior.walk() (NEW!)
+  warrior.walk()
+
+  warrior.feel() (NEW!)
+
+  warrior.attack() (NEW!)
+
+  warrior.health() (NEW!)
+
+  warrior.rest() (NEW!)
 
 
 When you're done editing Player.js, run the warriorjs command again.
