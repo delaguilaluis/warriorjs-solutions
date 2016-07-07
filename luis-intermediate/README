@@ -1,20 +1,18 @@
-Level 7
+Level 8
 
-Another ticking sound, but some sludge is blocking the way.
+You discover a satchel of bombs which will help when facing a mob of enemies.
 
-Tip: Quickly kill the sludge and rescue the captive before the bomb goes off. You can't simply go around them.
+Tip: Detonate a bomb when you see a couple enemies ahead of you (`warrior.look()`). Watch out for your health too.
 
 
-╔═════╗
-║ sC >║
-║@ C C║
-║ s   ║
-╚═════╝
+╔═══════╗
+║@ Ss C>║
+╚═══════╝
 
   > = stairs
   @ = Luis
+  S = thickSludge
   s = sludge
-  C = captive
 
 
 Warrior abilities:
@@ -38,6 +36,10 @@ Warrior abilities:
   warrior.directionOf()
 
   warrior.listen()
+
+  warrior.detonate() (NEW!)
+
+  warrior.look() (NEW!)
 
 
 When you're done editing Player.js, run the warriorjs command again.

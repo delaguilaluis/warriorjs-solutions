@@ -27,7 +27,7 @@ function filterSurroundings(surroundings, filter) {
 }
 
 function isTooRisky(warrior) {
-  return warrior.health() < (FULL_HEALTH * 0.5);
+  return warrior.health() < (FULL_HEALTH * 0.25);
 }
 
 function shouldRest(warrior) {
@@ -69,12 +69,13 @@ function getRightDirection(surroundings, desiredDirection) {
   }
 
   // The desired direction is not a good idea, let's try another path
-  return surroundings.find(surrounding => (
+  const alternativeSurrounding = surroundings.find(surrounding => (
       surrounding.direction !== desiredDirection &&
         surrounding.direction !== getReverseDirection(desiredDirection) &&
         surrounding.space.isEmpty()
-    ))
-    .direction;
+    ));
+
+  return alternativeSurrounding && alternativeSurrounding.direction;
 }
 
 class Player { // eslint-disable-line no-unused-vars
@@ -90,15 +91,26 @@ class Player { // eslint-disable-line no-unused-vars
     // Is there someone about to blow everything up?
     const occupiedSpaces = warrior.listen();
     const tickingSpaces = occupiedSpaces.filter(space => space.isTicking());
-    if (tickingSpaces.length) {
-      const desiredDirection = warrior.directionOf(tickingSpaces.pop());
-      const rightDirection = getRightDirection(surroundings, desiredDirection);
-      return warrior.walk(rightDirection);
+    const isSomethingTicking = !!tickingSpaces.length;
+
+    // Should I rest or continue?
+    const enemySurroundings = filterSurroundings(surroundings, 'Enemy');
+    const existNearbyEnemies = !!enemySurroundings.length;
+    if (!existNearbyEnemies && !isSomethingTicking && shouldRest(warrior)) {
+      return warrior.rest();
     }
 
-    // OK, we're safe, let's see if I can fight a guy next to me
-    const enemySurroundings = filterSurroundings(surroundings, 'Enemy');
-    if (enemySurroundings.length) {
+    // Let's go to the ticking captive
+    if (isSomethingTicking) {
+      const desiredDirection = warrior.directionOf(tickingSpaces.pop());
+      const rightDirection = getRightDirection(surroundings, desiredDirection);
+      if (rightDirection) {
+        return warrior.walk(rightDirection);
+      }
+    }
+
+    // OK, it's time to fight. Is anyone next to me?
+    if (existNearbyEnemies) {
       if (isTooRisky(warrior)) {
         // Try to bail out!
         const emptySurroundings = filterSurroundings(surroundings, 'Empty');
@@ -110,12 +122,15 @@ class Player { // eslint-disable-line no-unused-vars
       }
 
       // Attack
-      return warrior.attack(enemySurroundings.pop().direction);
-    }
+      const attackDirection = enemySurroundings.pop().direction;
+      const enemiesAhead = warrior.look(attackDirection);
 
-    // Can't feel any enemy nearby. Should I rest or continue?
-    if (shouldRest(warrior)) {
-      return warrior.rest();
+      // Is it worth to make an explotion here?
+      if ((enemiesAhead.length > 1) && !isTooRisky(warrior)) {
+        return warrior.detonate(attackDirection);
+      }
+
+      return warrior.attack(attackDirection);
     }
 
     // WAIT! Was I running away? If so, I should go back and fight!
