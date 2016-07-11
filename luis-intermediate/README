@@ -1,17 +1,19 @@
-Level 8
+Level 9
 
-You discover a satchel of bombs which will help when facing a mob of enemies.
+Never before have you seen a room so full of sludge. Start the fireworks!
 
-Tip: Detonate a bomb when you see a couple enemies ahead of you (`warrior.look()`). Watch out for your health too.
+Tip: Be careful not to let the ticking captive get caught in the flames. Use `warrior.distanceOf()` to avoid the captives.
 
 
-╔═══════╗
-║@ Ss C>║
-╚═══════╝
+╔════╗
+║ssC>║
+║@sss║
+║ssC ║
+╚════╝
 
   > = stairs
   @ = Luis
-  S = thickSludge
+  C = captive
   s = sludge
 
 
@@ -37,9 +39,11 @@ Warrior abilities:
 
   warrior.listen()
 
-  warrior.detonate() (NEW!)
+  warrior.detonate()
 
-  warrior.look() (NEW!)
+  warrior.look()
+
+  warrior.distanceOf() (NEW!)
 
 
 When you're done editing Player.js, run the warriorjs command again.
